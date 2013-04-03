@@ -281,7 +281,7 @@ sub openstack_iaas_creation {
     );
 
     Entity::Component::Linux::LinuxMount->new(
-        linux_id               => $compute->getComponent(category => 'System')->id,
+        linux_id               => $openstack->getComponent(category => 'System')->id,
         linux_mount_device     => '10.0.0.1:/nfsexports/glance_repository',
         linux_mount_point      => '/var/lib/glance/images',
         linux_mount_filesystem => 'nfs',
