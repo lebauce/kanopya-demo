@@ -27,8 +27,8 @@ sub run {
     $instances->{physical_hoster} = $kanopya->getHostManager();
 
     $instances->{iscsi_manager} = EEntity->new(
-                            entity => $kanopya->getComponent(name => "Iscsitarget")
-                        );
+                                      entity => $kanopya->getComponent(name => "Iscsitarget")
+                                  );
                         
     $instances->{admin_poolip} = Entity::Poolip->find(hash => { poolip_name => 'kanopya_admin' });
     $instances->{vms_role} = Entity::NetconfRole->find(hash => { netconf_role_name => "vms" });
@@ -282,7 +282,7 @@ sub openstack_iaas_creation {
 
     Entity::Component::Linux::LinuxMount->new(
         linux_id               => $openstack->getComponent(category => 'System')->id,
-        linux_mount_device     => '10.0.0.1:/nfsexports/glance_repository',
+        linux_mount_device     => $instances->{kanopya_master}->adminIp . ':/nfsexports/glance_repository',
         linux_mount_point      => '/var/lib/glance/images',
         linux_mount_filesystem => 'nfs',
         linux_mount_options    => 'defaults',
@@ -366,7 +366,7 @@ sub openstack_iaas_creation {
                                component_configuration => {
                                    mysql5_id          => $sql->id,
                                    nova_controller_id => $nova_controller->id,
-                                   vmm_id             => $nova_controller->id
+                                   iaas_id            => $nova_controller->id
                                }
                            },
                        }
@@ -392,7 +392,7 @@ sub openstack_iaas_creation {
 
     Entity::Component::Linux::LinuxMount->new(
         linux_id               => $compute->getComponent(category => 'System')->id,
-        linux_mount_device     => '10.0.0.1:/nfsexports/openstack_fast_nfs',
+        linux_mount_device     => $instances->{kanopya_master}->adminIp . ':/nfsexports/openstack_fast_nfs',
         linux_mount_point      => '/var/lib/nova/instances',
         linux_mount_filesystem => 'nfs',
         linux_mount_options    => 'defaults',

@@ -87,7 +87,9 @@ sub storage_policies_creation {
                                     policy_type         => 'storage',
                                     disk_manager_id     => $fileimage->id,
                                     container_access_id => Entity::ContainerAccess->find(
-                                                               hash => { container_access_export => '10.0.0.1:/nfsexports/openstack_fast_nfs' } 
+                                                               hash => {
+                                                                   container_access_export => $instances->{kanopya_master}->adminIp . ':/nfsexports/openstack_fast_nfs'
+                                                               }
                                                            )->id,
                                     image_type          => "qcow2",
                                     export_manager_id   => $fileimage->id,
@@ -114,7 +116,9 @@ sub storage_policies_creation {
                                         policy_type         => 'storage',
                                         disk_manager_id     => $fileimage->id,
                                         container_access_id => Entity::ContainerAccess->find(
-                                                                   hash => { container_access_export => '10.0.0.1:/nfsexports/openstack_low_nfs' }
+                                                                   hash => {
+                                                                       container_access_export => $instances->{kanopya_master}->adminIp . ':/nfsexports/openstack_low_nfs'
+                                                                   }
                                                                )->id,
                                         image_type          => 'qcow2',
                                         export_manager_id   => $fileimage->id,
@@ -142,7 +146,6 @@ sub network_policies_creation {
                           );
 
     print "creating network policy : $name\n";
-
 
     $name = "n2";
     $instances->{network}->{$name} = Entity::Policy::NetworkPolicy->new(

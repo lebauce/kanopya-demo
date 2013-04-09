@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use KanopyaDemo::Config;
 
+use JSON;
 use BaseDB;
 use Entity::ServiceProvider::Cluster;
 use Entity::User::Customer;
@@ -14,6 +15,8 @@ use Entity::Container;
 use Entity::ContainerAccess::NfsContainerAccess;
 use Entity::Network;
 use Entity::Poolip;
+use EEntity;
+use Kanopya::Tools::Register;
 
 sub run {
     print "################################################\n";
@@ -27,7 +30,18 @@ sub run {
     $instances->{kanopya} = Entity::ServiceProvider::Cluster->find(
                                 hash => { cluster_name => 'kanopya' }
                             );
-        
+
+    # This is required to instance a EEntity from outside the executor
+    my @hosts = $instances->{kanopya}->getHosts();
+    my $kanopya_master = $hosts[0];
+    EEntity->new(entity => $kanopya_master);
+
+    $instances->{kanopya_master} = $kanopya_master->node;
+
+    $instances->{kanopya}->setAttr(name  => "cluster_nameserver1",
+                                   value => $config->{nameserver},
+                                   save  => 1);
+
     # customer creation  
     customers_creation();
     
@@ -56,45 +70,32 @@ sub customers_creation {
 }
 
 sub hosts_registration {
+    my $file = $config->{hosts};
+
+    my $json = '';
+    open (JSON, '<', $file);
+    while (<JSON>) {
+        $json .= $_;
+    }
+
     my $hostmanager = $instances->{kanopya}->getHostManager();
-    
-    for my $board (@{$config->{hosts}}) {
-        print "registering a physical host ".$board->{serial}."...";
-        my $host = Entity::Host->new(
-                       active             => 1,
-                       host_manager_id    => $hostmanager->id,
-                       host_serial_number => $board->{serial},
-                       host_desc          => $board->{desc},
-                       host_ram           => $board->{ram} * 1024 * 1024,
-                       host_core          => $board->{core},
-                   );
+    my $hosts = decode_json($json);
 
-        if (defined $board->{ifaces}) {
-            foreach my $iface (@{ $board->{ifaces} }) {
-                my $if = $host->addIface(
-                             iface_name     => $iface->{name},
-                             iface_pxe      => $iface->{pxe},
-                             iface_mac_addr => $iface->{mac},
-                         );
-
-                if (defined $iface->{master}) {
-                    $if->setAttr(name => 'master', value => $iface->{master});
-                    $if->save();
-                }
-            }
-        }
+    for my $board (@{$hosts}) {
+        print "registering a physical host " . $board->{serial_number} . "...";
+        Kanopya::Tools::Register->registerHost(board => $board);
         print "ok\n";
     }
 }
 
 sub masterimages_upload {
     $instances->{masterimages} = {};
-    while(my($img,$file) = each %{$config->{masterimage_files}}) {    
+    while(my($img,$file) = each %{$config->{masterimages}}) {
         print "registering master image $file";
         my $operation = Entity::Operation->enqueue(
                       priority => 200,
                       type     => 'DeployMasterimage',
-                      params   => { file_path => $file,
+                      params   => { file_path => $config->{masterimages_path} . "/" . $file,
                                     keep_file => 1 },
         );
         
