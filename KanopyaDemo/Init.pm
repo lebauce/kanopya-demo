@@ -15,6 +15,7 @@ use Entity::Container;
 use Entity::ContainerAccess::NfsContainerAccess;
 use Entity::Network;
 use Entity::Poolip;
+use Entity::Masterimage;
 use EEntity;
 use Kanopya::Tools::Register;
 
@@ -92,13 +93,11 @@ sub masterimages_upload {
     $instances->{masterimages} = {};
     while(my($img,$file) = each %{$config->{masterimages}}) {
         print "registering master image $file";
-        my $operation = Entity::Operation->enqueue(
-                      priority => 200,
-                      type     => 'DeployMasterimage',
-                      params   => { file_path => $config->{masterimages_path} . "/" . $file,
-                                    keep_file => 1 },
-        );
-        
+        my $operation = Entity::Masterimage->create(
+                            file_path => $config->{masterimages_path} . "/" . $file,
+                            keep_file => 1,
+                        );
+
         waitForWorkflow($operation);
         
     }
