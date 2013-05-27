@@ -10,6 +10,7 @@ use Entity::Netconf;
 use Entity::Masterimage;
 use Entity::ContainerAccess;
 use Entity::Component::Lvm2::Lvm2Vg;
+use Entity::Policy;
 use Entity::Policy::HostingPolicy;
 use Entity::Policy::StoragePolicy;
 use Entity::Policy::NetworkPolicy;
@@ -128,7 +129,17 @@ sub storage_policies_creation {
 
 sub network_policies_creation {
     my $adminnetconf = Entity::Netconf->find(hash => { netconf_name => 'Kanopya admin' });
-    
+
+    my $adminnet_policy = Entity::Policy->find(hash => {
+                              policy_name => 'Default network configuration'
+                          });
+
+    $adminnet_policy->update(
+        policy_name => $adminnet_policy->policy_name,
+        policy_desc => $adminnet_policy->policy_desc,
+        cluster_nameserver1 => '192.168.10.254'
+    );
+
     #my $dmznetconf = Entity::Netconf->find(hash => { netconf_name => 'Hederatech DMZ access' });
 
     my $name = "n1";    

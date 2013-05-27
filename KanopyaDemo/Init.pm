@@ -14,6 +14,7 @@ use Entity::Component::Lvm2::Lvm2Vg;
 use Entity::Container;
 use Entity::ContainerAccess::NfsContainerAccess;
 use Entity::Network;
+use Entity::Netconf;
 use Entity::Poolip;
 use Entity::Masterimage;
 use EEntity;
@@ -42,6 +43,16 @@ sub run {
     $instances->{kanopya}->setAttr(name  => "cluster_nameserver1",
                                    value => $config->{nameserver},
                                    save  => 1);
+
+    $instances->{adminnetconf} = Entity::Netconf->find(
+                                     hash => { netconf_name => "Kanopya admin" }
+                                 );
+
+    my $admin_network = Entity::Network->find(
+                            hash => { network_name => "admin" }
+                        );
+
+    $admin_network->network_gateway($config->{admin_network_gateway});
 
     # customer creation  
     customers_creation();
@@ -99,7 +110,6 @@ sub masterimages_upload {
                         );
 
         waitForWorkflow($operation);
-        
     }
 }
 

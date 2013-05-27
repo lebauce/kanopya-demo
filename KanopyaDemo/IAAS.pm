@@ -32,9 +32,6 @@ sub run {
                         
     $instances->{admin_poolip} = Entity::Poolip->find(hash => { poolip_name => 'kanopya_admin' });
     $instances->{vms_role} = Entity::NetconfRole->find(hash => { netconf_role_name => "vms" });
-    $instances->{adminnetconf} = Entity::Netconf->find(
-                                     hash => { netconf_name => "Kanopya admin" }
-                                 );
     $instances->{iscsi_portal_ids} = [];
     for my $portal (Entity::Component::Iscsi::IscsiPortal->search(hash => { iscsi_id => $instances->{iscsi_manager}->id })) {
         push @{$instances->{iscsi_portal_ids}}, $portal->id;
