@@ -117,9 +117,6 @@ sub opennebula_iaas_creation {
                            },
                            'kvm'        => { component_type => ClassType::ComponentType->find(hash => {component_name => 'Kvm'})->id,
                            },  
-                           'fileimagemanager' => {
-                               component_type => ClassType::ComponentType->find(hash => {component_name => 'Fileimagemanager'})->id,
-                           }
                        }
                   );
 
@@ -195,6 +192,7 @@ sub openstack_iaas_creation {
                                manager_params => {
                                    cpu => 1,
                                    ram => 2*1024*1024,
+                                   deploy_on_disk => 1
                                },
                            },
                            disk_manager => {
@@ -244,10 +242,13 @@ sub openstack_iaas_creation {
                            'quantum' => {
                                component_type => ClassType::ComponentType->find(hash => {component_name => 'Quantum'})->id,
                            },
-                           'fileimagemanager' => {
-                               component_type => ClassType::ComponentType->find(hash => {component_name => 'Fileimagemanager'})->id,
+                           'cinder' => {
+                               component_type => ClassType::ComponentType->find(hash => {component_name => 'Cinder'})->id,
+                           },
+                           'lvm' => {
+                               component_type => ClassType::ComponentType->find(hash => {component_name => 'Lvm'})->id,
                            }
-                       }
+                        }
                     );
 
 
@@ -266,6 +267,7 @@ sub openstack_iaas_creation {
     my $nova_controller = $openstack->getComponent(name => "NovaController");
     my $glance = $openstack->getComponent(name => "Glance");
     my $quantum = $openstack->getComponent(name => "Quantum");
+    my $cinder = $openstack->getComponent(name => "Cinder");
 
     Entity::Component::Linux::LinuxMount->new(
         linux_id               => $openstack->getComponent(category => 'System')->id,
@@ -309,6 +311,11 @@ sub openstack_iaas_creation {
         nova_controller_id => $nova_controller->id
     });    
 
+    $cinder->setConf(conf => {
+        mysql5_id          => $sql->id,
+        nova_controller_id => $nova_controller->id
+    });
+
     $operation = Entity::ServiceProvider::Cluster->create(
                        cluster_name         => 'Compute',
                        cluster_basehostname => 'compute',
@@ -331,6 +338,7 @@ sub openstack_iaas_creation {
                                manager_params => {
                                    cpu => 1,
                                    ram => 2*1024*1024,
+                                   deploy_on_disk => 1
                                },
                            },
                            disk_manager => {
@@ -482,6 +490,5 @@ sub iaas_monitoring_definition {
         }
     }
 }
-
 
 1;
