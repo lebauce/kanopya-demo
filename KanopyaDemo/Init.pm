@@ -123,7 +123,7 @@ sub repositories_creation {
         my $operation = $disk_manager->createDisk(
                             name       => $name,
                             size       => $size * 1024 * 1024 * 1024,
-                            filesystem => "ext3",
+                            filesystem => "ext4",
                             vg_id      => Entity::Component::Lvm2::Lvm2Vg->find(
                                              hash => { lvm2_vg_name => $config->{volume_group_name} }
                                           )->id,
