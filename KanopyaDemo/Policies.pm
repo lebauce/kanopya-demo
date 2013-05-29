@@ -76,7 +76,7 @@ sub hosting_policies_creation {
 }
 
 sub storage_policies_creation {
-    my $fileimage = $instances->{iaas}->{openstack}->getComponent(name => 'Fileimagemanager');
+    my $fileimage = $instances->{kanopya}->getComponent(name => 'Fileimagemanager');
     my $lvm = $instances->{kanopya}->getComponent(name => 'Lvm');
     my $iscsitarget = $instances->{kanopya}->getComponent(name => 'Iscsitarget');
     my $nfsd = $instances->{kanopya}->getComponent(name  => 'Nfsd');
