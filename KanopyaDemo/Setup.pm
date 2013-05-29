@@ -21,6 +21,7 @@ sub run {
 
     system("invoke-rc.d mysql start");
     system("perl setup.pl < $setup_file");
+    system("service kanopya-state-manager stop");
     chdir $dir;
     return 0;
 }
