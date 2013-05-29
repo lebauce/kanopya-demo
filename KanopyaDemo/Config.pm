@@ -61,7 +61,6 @@ our $config = {
     
     masterimages => {
         'centos' => "centos-6.3-opennebula3.tar.bz2",
-        'sles'   => 'sles-11-simple-host.tar.bz2',
         'ubuntu' => 'ubuntu-precise-amd64.tar.bz2'
     },
                           
