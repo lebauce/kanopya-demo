@@ -16,7 +16,7 @@ sub run {
                           service_name            => $name,
                           service_desc            => '',
                           hosting_policy_id       => $instances->{hosting}->{'Virtual Machine hosted on Openstack'}->id,
-                          storage_policy_id       => $instances->{storage}->{'Fast NFS'}->id,
+                          storage_policy_id       => $instances->{storage}->{'Block storage via ISCSI'}->id,
                           network_policy_id       => $instances->{network}->{'n1'}->id,
                           scalability_policy_id   => $instances->{scalability}->{'Scalable'}->id,
                           system_policy_id        => $instances->{system}->{'LAMP stack'}->id,
