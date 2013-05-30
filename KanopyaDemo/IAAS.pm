@@ -215,9 +215,6 @@ sub openstack_iaas_creation {
                            admin => {
                                interface_netconfs  => { $instances->{adminnetconf}->id => $instances->{adminnetconf}->id },
                            },
-                           vms => {
-                               interface_netconfs => { $vms_os_netconf->id => $vms_os_netconf->id },
-                           },
                        },
                        components => {
                            'mysql' => {
