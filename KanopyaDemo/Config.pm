@@ -83,8 +83,6 @@ our $config = {
         }
     },
 
-    admin_network_gateway => "10.0.0.1",
-
     nameserver => "192.168.10.254"
 };
 

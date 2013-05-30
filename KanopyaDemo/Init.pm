@@ -52,7 +52,8 @@ sub run {
                             hash => { network_name => "admin" }
                         );
 
-    $admin_network->network_gateway($config->{admin_network_gateway});
+    $admin_network->network_gateway($config->{admin_network_gateway} ||
+                                    $instances->{kanopya_master}->adminIp);
 
     # customer creation  
     customers_creation();
