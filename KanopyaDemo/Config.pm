@@ -103,7 +103,7 @@ our $instances = {};
 sub waitForWorkflow {
     my ($op) = @_;
     while(1) {
-        my $workflow = $op->getWorkflow;
+        my $workflow = $op->workflow;
 
         my $state = $workflow->state;
         if($state eq 'running') {
